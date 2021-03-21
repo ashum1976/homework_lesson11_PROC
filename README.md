@@ -1,8 +1,8 @@
 
-
-<<<<<<< HEAD
 man proc
+
 /proc/[pid]/stat - статус информация о процессах, отсюда её берёт ps
+
 man kill - ман по сигналам
 kill -l  -все возможгые сигналы:
 
@@ -21,7 +21,7 @@ kill -l  -все возможгые сигналы:
     63) SIGRTMAX-1  64) SIGRTMAX
 
 
-Namespaces (пространство имён) 
+##          Namespaces (пространство имён) 
 
 Утилиты: 
 
@@ -29,13 +29,13 @@ Namespaces (пространство имён)
     Пример:
     
         unshare --fork --pid --mount-proc readlink /proc/self
-        $ unshare --map-root-user --user sh -c whoami
+        unshare --map-root-user --user sh -c whoami
 
 *   **nsenter** <---- _запустить программу в чужом пространстве имен (войтив чужое пространство)_
 *   **lsns**    <---- _просмотр текущих Namespaces_
 
 
-Утилиты просмотра и управления  процессами, каталог "/proc"
+##          Утилиты просмотра и управления  процессами, каталог "/proc"
 
 
 **iotop             :** <----  _IO status
@@ -147,8 +147,3 @@ pstree
         fuser -v -m example.txt <---- найти процессы кто использует файловую систему где расположен файл
 
 
-=======
-
-
-man proc  секция        proc/[pid]/stat где ковыряется ps
->>>>>>> 93929eb9f64ddcb9d2d9561611ded94e8121e401
