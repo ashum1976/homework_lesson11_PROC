@@ -25,10 +25,7 @@ PID TTY      STAT   TIME COMMAND                    <---- "ps ax"
 ![Создание процесса](Images/Process_create.png)
 
 
-    |    col1   | col2      |
-    |------------|------------|
-    |   col3    |   col4    |
-
+   
 
 *                 Состояние "готов"
                     
