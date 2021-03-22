@@ -66,7 +66,7 @@ PID TTY      STAT   TIME COMMAND                    <---- "ps ax"
                         
 
 ____
-===
+---
 
 
 man proc
