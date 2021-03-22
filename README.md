@@ -26,6 +26,7 @@ PID TTY      STAT   TIME COMMAND                    <---- "ps ax"
 
 
     |    col1   | col2      |
+    |------------|------------|
     |   col3    |   col4    |
 
 
