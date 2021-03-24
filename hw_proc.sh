@@ -27,24 +27,30 @@ for (( i=1025; i<=1090; i++ ))
 
 (
 i=0
-echo "PID|TTY|STAT|PPID|TIME|COMMAND";
+#Шапка вывода данных в скрипте, разбивка по полям с разделителем "|". Для дальнейшего формирования таблицы вывода.  
+echo "PID|TTY|STAT|PPID|TIME|COMMAND"; 
+
+#Проход с помощью цикла по сформированному массиву PID из каталога proc
 while (( $i < ${#array_pids[@]} ))
         do
            if [[ -d $( echo /proc/${array_pids[$i]}) ]] 
             then
-           # echo ${array_pids[$i]}
-           # awk '{print "PID="$1,"COMMAND="$2, "STAT="$3,"PPID="$4}' /proc/$(echo ${array_pids[$i]})/stat
-            #awk   '{print $1,"  " $7,"  "$3,"  "$4,"  "$2}' /proc/$(echo ${array_pids[$i]})/stat
+            #Формируем список переменных для получения нужных полей в выводе скрипта.
             pid=$(awk '{print $1}' /proc/$(echo ${array_pids[$i]})/stat)
             tty=$(awk '{print $7}' /proc/$(echo ${array_pids[$i]})/stat)
             stat=$(awk '{print $3}' /proc/$(echo ${array_pids[$i]})/stat)
             ppid=$(awk '{print $4}' /proc/$(echo ${array_pids[$i]})/stat)
             comm=$(awk '{print $2}' /proc/$(echo ${array_pids[$i]})/stat)
+            
+            #Преобразование поля TIME в выводе скрипта, должно отображаться время выполнения процессов на CPU. Данные о том как это поле формиируется были взяты с https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat
             utime=$(awk '{print $14}' /proc/$(echo ${array_pids[$i]})/stat)
             stime=$(awk '{print $15}' /proc/$(echo ${array_pids[$i]})/stat)
             uptime=$(awk '{print $1}' /proc/uptime)
             vtime=$(( utime + stime ))
-            time=$(date -d@$(( vtime / clk_tck  )) +%M:%S)
+            time=$(date -d@$(( vtime / clk_tck  )) +%M:%S) #<---- Результирующее поле, содержащее время в формате (Min:Sec), если нужно ещё и сасы, то добавиить в вывод ещё одно значение (%H)
+            #/
+            #Делаем замену в выводе поля TTY где значения из файла stat  выводятся в цифровом виде, преобразуем в вид, как в при выводе программы ps ax.
+            #Используютяся ранее сформированные массивы array_pts и array_tty
                     if [[ $(echo $tty) -eq 0  ]]
                         then 
                                 tty='?'
