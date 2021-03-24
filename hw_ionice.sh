@@ -11,7 +11,7 @@
 # Если несколько ядер, то для теста, запустим обе задачи на одном ядре
 
 #Устновим планировщик ввода/вывода
-#echo cfq > /sys/block/sda/queue/scheduler
+echo cfq > /sys/block/sda/queue/scheduler
 
 time taskset -c 0  ionice -c 1 -n 0  dd if=/dev/zero of=/tmp/test.img bs=2000 count=1M  && echo  -e "\e[31m ionice -c 1 команда завершена !\e[0m" &
 time taskset -c 0 ionice -c 3 dd if=/dev/zero of=/tmp/test2.img bs=2000 count=1M && echo  -e "\e[31m ionice -c 3 команда завершена !\e[0m" &
