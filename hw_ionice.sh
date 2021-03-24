@@ -10,5 +10,5 @@
 #        -n      Не используется
 # Если несколько ядер, то для теста, запустим обе задачи на одном ядре
 
-taskset -c 0 time sudo ionice -c 1 -n 0  dd if=/dev/zero of=/tmp/test.img bs=2000 count=1M &
-taskset -c 0 time sudo ionice -c 3 dd if=/dev/zero of=/tmp/test2.img bs=2000 count=1M &
+taskset -c 0 time ionice -c 1 -n 0  dd if=/dev/zero of=/tmp/test.img bs=2000 count=1M  && echo  -e "\e[31m nice 10 команда завершена !\e[0m" &
+taskset -c 0 time ionice -c 3 dd if=/dev/zero of=/tmp/test2.img bs=2000 count=1M && echo  -e "\e[31m nice 10 команда завершена !\e[0m" &

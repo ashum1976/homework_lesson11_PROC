@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#Генерим test файл для работы других скриптов проверки
+dd if=/dev/urandom of=/vagrant/test bs=512K count=125
+
 clk_tck=$(getconf CLK_TCK)
 #Заносим в переменную все значения процессов по их PID из каталога proc 
 proc_pid=$(ls -1 /proc/ | egrep '^[0-9]+$' | sort -g)

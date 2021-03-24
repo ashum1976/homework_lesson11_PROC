@@ -4,5 +4,8 @@
 #'19' - наименьший приоритет, '-20' - наивысший приоритет_
 #Если несколько ядер, то для теста, запустим обе задачи на одном ядре
 
-taskset -c 0 time nice -n 10 tar -czf nice_low.tar.bz2 /usr/src/ &
-taskset -c 0 time  sudo nice -n -10 tar -czf nice_higt.tar.bz2 /usr/src/ &
+
+
+
+time taskset -c 0 nice -n 10 xz -z -c -9  /vagrant/test > /dev/null && echo  -e "\e[31m nice 10 команда завершена !\e[0m" &
+time taskset -c 0 nice -n -10 xz -z -c -9  /vagrant/test > /dev/null  &&  echo  -e "\e[31m nice 10 команда завершена !\e[0m" &
