@@ -1,23 +1,70 @@
 #!/usr/bin/env bash
 
-# awk '{print "PID="$1,"COMMAND="$2, "STAT=","PPID="$4}'
+clk_tck=$(getconf CLK_TCK)
+#Заносим в переменную все значения процессов по их PID из каталога proc 
+proc_pid=$(ls -1 /proc/ | egrep '^[0-9]+$' | sort -g)
 
+#proc_pid1=$(ls -d /proc/+([0-9]) | sort --field-separator="/" -k 3 -g)
+#echo $proc_pid1
+#Задаём массив для хранения значений PID
+array_pids=( $(echo ${proc_pid}) )
 
-#ls -d /proc/+([0-9])/ | sort --field-separator=/ -k 3 -g
+#Подготавливаем массив array_pts для замены в поле TTY, числового значения 348(16-44), на значение pts/"$"
+pts_count=0
+for (( i=34816; i<=34844; i++ ))
+    do
+        array_pts[$i]=$(echo "pts/$pts_count")
+        (( pts_count++ ))
+done
+
+#Подготавливаем массив array_tty для замены в поле TTY, числового значения, на значение tty"$"
+tty_count=0
+for (( i=1025; i<=1090; i++ ))
+    do
+        array_tty[$i]=$(echo "tty${tty_count}")
+        (( tty_count++ ))
+    done
+
+(
+i=0
+echo "PID|TTY|STAT|PPID|TIME|COMMAND";
+while (( $i < ${#array_pids[@]} ))
+        do
+           if [[ -d $( echo /proc/${array_pids[$i]}) ]] 
+            then
+           # echo ${array_pids[$i]}
+           # awk '{print "PID="$1,"COMMAND="$2, "STAT="$3,"PPID="$4}' /proc/$(echo ${array_pids[$i]})/stat
+            #awk   '{print $1,"  " $7,"  "$3,"  "$4,"  "$2}' /proc/$(echo ${array_pids[$i]})/stat
+            pid=$(awk '{print $1}' /proc/$(echo ${array_pids[$i]})/stat)
+            tty=$(awk '{print $7}' /proc/$(echo ${array_pids[$i]})/stat)
+            stat=$(awk '{print $3}' /proc/$(echo ${array_pids[$i]})/stat)
+            ppid=$(awk '{print $4}' /proc/$(echo ${array_pids[$i]})/stat)
+            comm=$(awk '{print $2}' /proc/$(echo ${array_pids[$i]})/stat)
+            utime=$(awk '{print $14}' /proc/$(echo ${array_pids[$i]})/stat)
+            stime=$(awk '{print $15}' /proc/$(echo ${array_pids[$i]})/stat)
+            uptime=$(awk '{print $1}' /proc/uptime)
+            vtime=$(( utime + stime ))
+            time=$(date -d@$(( vtime / clk_tck  )) +%M:%S)
+                    if [[ $(echo $tty) -eq 0  ]]
+                        then 
+                                tty='?'
+                                
+                        elif [[ $(echo $tty) -le 34844 && $(echo $tty) -ge 34816 ]]
+                                then 
+                                    tty=$(echo ${array_pts[$tty]})
+                                    
+                        elif [[ $(echo $tty) -le 1090 && $(echo $tty) -ge 1025 ]]
+                                then 
+                                    tty=$(echo ${array_tty[$tty]})
+                                    
+                    fi
             
-#                ls -d /proc/+([0-9])/                       <---- Выводит имена каталогов, вместо их содержимого. Имена каталогов  - цифры.
- #               sort --field-separator=/ -k 3 -g      <---- Сортировка вывода, где разделитель полей "/"
+            
+            
+            echo "${pid}|${tty}|${stat}|${ppid}|${time}|${comm}"
+             fi
+             (( i++ ))
+done
+) | column -t -s "|"
 
-                
-# echo "С высоким приоритетом дисковых операций"
-#echo "С низким приоритетом дисковых операций"
-# Запускаем одновременно 2 команды с разным приоритетом
-
-#time sudo ionice -c 1 -n 0  dd if=/dev/zero of=/tmp/test.img bs=2000 count=1M &  
-
-
-#time sudo ionice -c 3 dd if=/dev/zero of=/tmp/test2.img bs=2000 count=1M &
-
-
-time time sudo nice -n 19 tar -czf nice_low.tar.bz2 /usr/src/ &
-time time sudo nice -n -20 tar -czf nice_higt.tar.bz2 /usr/src/ &
+#column - формирование вывода, в виде таблицы с разбивкой полей по "|"

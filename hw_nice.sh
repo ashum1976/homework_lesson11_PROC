@@ -2,6 +2,6 @@
 
 #Паралельный зпуск команд, для теста и проверки работы команды nice, предназначенной для запуска процессов с различными приоритетами исполнения
 #'19' - наименьший приоритет, '-20' - наивысший приоритет_
-
-time time sudo nice -n 10 tar -czf nice_low.tar.bz2 /usr/src/ &
-time time sudo nice -n -10 tar -czf nice_higt.tar.bz2 /usr/src/ &
+#Если несколько ядер, то для теста, запустим обе задачи на одном ядре
+taskset -c 0 time nice -n 10 tar -czf nice_low.tar.bz2 /usr/src/ &
+taskset -c 0 time  sudo nice -n -10 tar -czf nice_higt.tar.bz2 /usr/src/ &
